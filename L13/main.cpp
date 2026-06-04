@@ -1,83 +1,87 @@
 #include <iostream>
+#include <vector>
+#include <algorithm>
 using namespace std;
 
-template <class T>
-T* remove(T src[], int sizeSrc, T minus[], int sizeMinus, int& retSize);
-
 int main() {
-	// remove() 함수를 int로 구체화하는 경우
-	cout << "정수 배열 {1,2,3,4}에서 정수 배열 {-3,5,10,1,2,3}을 뺍니다" << endl;
-	int x[] = { 1,2,3,4 };
-	int y[] = { -3,5,10,1,2,3 };
-	int retSize;
-	int* p = remove(x, 4, y, 6, retSize);
-	if (retSize == 0) {
-		cout << "모두 제거되어 리턴하는 배열이 없습니다." << endl;
-		return 0;
+	vector<int> a;
+	vector<int> b;
+	cout << "A 반의 점수를 입력하세요(3개) " << endl;
+	for (int i = 0; i < 3; i++) {
+		// 입력: 50 -90 80
+		// vector에 값 추가
+		int input = 0;
+		cin >> input;
+		a.push_back(input);
 	}
-	else {
-		for (int i = 0; i < retSize; i++) // 배열의 모든 원소 출력
-			cout << p[i] << ' ';
-		cout << endl;
-		delete[] p; // 할당받은 배열 반환
+	cout << "B 반의 점수를 입력하세요(3개)" << endl;
+	for (int i = 0; i < 3; i++) {
+		// 입력: 60 40 75
+		// vector에 값 추가
+		int input = 0;
+		cin >> input;
+		b.push_back(input);
 	}
-	// remove() 함수를 double로 구체화하는 경우
-	// 이곳에 작성
-	cout << "실수 배열 {1.1, 2.2, 3.3, 4.4}에서 실수 배열 {2.2, 4.4}를 뺍니다" << endl;
-	double x_d[] = { 1.1, 2.2, 3.3, 4.4 };
-	double y_d[] = { 2.2, 4.4 };
-	int retSize_d;
-	double* q = remove(x_d, 4, y_d, 6, retSize_d);
-	if (retSize_d == 0) {
-		cout << "모두 제거되어 리턴하는 배열이 없습니다." << endl;
-		return 0;
+	// auto를 사용하여 값 출력
+	cout << "A반 점수" << endl;
+	for (const auto& output : a) {
+		cout << output << ' ';
 	}
-	else {
-		for (int i = 0; i < retSize_d; i++) // 배열의 모든 원소 출력
-			cout << q[i] << ' ';
-		cout << endl;
-		delete[] q; // 할당받은 배열 반환
+	cout << endl;
+	cout << "B반 점수" << endl;
+	for (const auto& output : b) {
+		cout << output << ' ';
 	}
-}
+	cout << endl;
 
-template <class T>
-T* remove(T src[], int sizeSrc, T minus[], int sizeMinus, int& retSize) {
-
-	bool* keep = new bool[sizeSrc];
-	retSize = sizeSrc;
-
-	for (int i = 0; i < sizeSrc; i++) {
-		bool found = false;
-		for (int j = 0; j < sizeMinus; j++) {
-			if (src[i] == minus[j]) {
-				found = true;
-				retSize--;
-				break;
-			}
-		}
-		if (!found) {
-			keep[i] = true;
-		}
-		else {
-			keep[i] = false;
-		}
+	cout << "A 점수 변경" << endl;
+	replace(a.begin(), a.end(), -90, 90); // -90을 90으로 변경
+	// 변경된 A 벡터 출력
+	for (const auto& output : a) {
+		cout << output << ' ';
 	}
+	cout << endl;
+	
+	//cout << a.size() + b.size();
 
-	if (retSize == 0) {
-		delete[] keep;
-		return nullptr;
+	// A반과 B반 데이터 합치기
+	vector<int> result;
+	//merge(a.begin(), a.end(), b.begin(), b.end(), back_inserter(result));
+	result = a;
+	result.insert(result.end(), b.begin(), b.end());
+
+	// A반 점수와 B반 점수를 합친 결과 (result) 출력
+	cout << "A반 점수와 B반 점수를 합친 결과: ";
+	for (const auto& output : result) {
+		cout << output << ' ';
 	}
+	cout << endl;
 
-	T* result = new T[retSize];
-	int index = 0;
+	
+	// result의 최대값과 최소값 출력 (min_element, max_element 사용)
+	cout << "최소값: " << *min_element(result.begin(), result.end()) << ", 최대값: " << *max_element(result.begin(), result.end()) << endl;
 
-	for (int i = 0; i < sizeSrc; i++) {
-		if (keep[i]) {
-			result[index] = src[i];
-			index++;
-		}
+	// 합친 vector를 오름차순과 내림차순으로 정렬하여 각각 출력하기
+	cout << "A반 점수와 B반 점수를 합친 vector 오름차순 정렬: ";
+	sort(result.begin(), result.end());
+	for (const auto& output : result) {
+		cout << output << ' ';
 	}
+	cout << endl;
+	cout << "A반 점수와 B반 점수를 합친 vector 내림차순 정렬: ";
+	sort(result.begin(), result.end(), greater<int>());
+	for (const auto& output : result) {
+		cout << output << ' ';
+	}
+	cout << endl;
 
-	delete[] keep;
-	return result;	
+	// remove + erase 함수를 사용하여 ‘50' 제거하기
+	result.erase(remove(result.begin(), result.end(), 50), result.end());
+	
+	// vector 출력
+	cout << "50점을 제거한 결과: ";
+	for (const auto& output : result) {
+		cout << output << ' ';
+	}
+	cout << endl;
 }
